@@ -22,7 +22,16 @@ export const login = tryCatchWrapper(async (req, res, next) => {
             idUsuario: result[0].idUsuario,
             tipo: result[0].tipo
         });
-    } catch (error) {
+        try {
+            const response = await axios.get('http://localhost:9000/api/crear?id_usuario=' + idUsuario + '&fecha=08/06/2024&hora=4:14&accion=login');
+            const mongoItems = response.data;
+            res.json(mongoItems);
+        } catch (error) {
+            res.status(500).send('Error al consumir la API de MongoDB');
+        }
+    }
+    
+    catch (error) {
         next(createCustomError(`Database query failed: ${error.message}`, 500));
     }
 });
