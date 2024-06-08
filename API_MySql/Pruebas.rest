@@ -1,0 +1,16 @@
+############# http://localhost:3000/notes/createNote Content-Type: application/json
+{
+"id_alumno_pk":"21",
+"num_control":"3225",
+"nombre":"prueba",
+"ap_paterno":"p",
+"ap_materno":"m",
+"sexo":"H",
+"fecha_nac":"127813",
+"semestre":"1",
+"nivel":"1",
+"foto":"",
+"telefono":"7577554",
+"correo":"hgfhgf",
+"id_carrera_fk":"1"
+}
