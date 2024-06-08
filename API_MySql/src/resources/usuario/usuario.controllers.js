@@ -1,6 +1,7 @@
 import { pool } from "../../db/connect.js";
 import { createCustomError } from "../../errors/customErrors.js";
 import { tryCatchWrapper } from "../../middlewares/tryCatchWrapper.js";
+const axios = require('axios');
 
 export const login = tryCatchWrapper(async (req, res, next) => {
     console.log("Se intentó hacer un login");
