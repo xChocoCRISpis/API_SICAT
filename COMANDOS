@@ -1,2 +1,5 @@
 --- COMANDOS PARA EJECTUTAR API MYSQL ----
 npm run dev
+
+--- COMANDOS PARA EJECTUTAR API MONGO ----
+npm run start
