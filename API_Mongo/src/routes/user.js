@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const BitacoraSchema = require('../models/user');
+const bitacora = require('../models/user');
 
 // Crear
 router.post('/crear', (req, res) => {
-    const user = new BitacoraSchema(req.body);
+    const user = new bitacora(req.body);
     user.save()
         .then((data) => res.json(data))
         .catch((error) => res.json({ message: error }));
@@ -12,7 +12,7 @@ router.post('/crear', (req, res) => {
 
 // Traer todos
 router.get('/traer', (req, res) => {
-    BitacoraSchema.find()
+    bitacora.find()
         .then((data) => res.json(data))
         .catch((error) => res.json({ message: error }));
 });
@@ -20,7 +20,7 @@ router.get('/traer', (req, res) => {
 // Traer por ID
 router.get('/traer/:id', (req, res) => {
     const { id } = req.params;
-    BitacoraSchema.findById(id)
+    bitacora.findById(id)
         .then((data) => res.json(data))
         .catch((error) => res.json({ message: error }));
 });
@@ -29,7 +29,7 @@ router.get('/traer/:id', (req, res) => {
 router.put('/traer/:id', (req, res) => {
     const { id } = req.params;
     const { fecha, hora, accion } = req.body;
-    BitacoraSchema.updateOne({ _id: id }, { $set: { fecha, hora, accion } })
+    bitacora.updateOne({ _id: id }, { $set: { fecha, hora, accion } })
         .then((data) => res.json(data))
         .catch((error) => res.json({ message: error }));
 });
@@ -37,7 +37,7 @@ router.put('/traer/:id', (req, res) => {
 // Eliminar por ID
 router.delete('/traer/:id', (req, res) => {
     const { id } = req.params;
-    BitacoraSchema.remove({ _id: id })
+    bitacora.remove({ _id: id })
         .then((data) => res.json(data))
         .catch((error) => res.json({ message: error }));
 });
