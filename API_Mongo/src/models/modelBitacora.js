@@ -28,5 +28,3 @@ const bitacoraSchema = new mongoose.Schema({
 }, { collection: 'bitacora' }); // Especifica el nombre de la colección
 
 module.exports = mongoose.model('bitacora', bitacoraSchema);
-
-//module.exports=mongoose.model('bitacora',bitacora);

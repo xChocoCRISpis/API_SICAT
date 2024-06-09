@@ -1,14 +1,19 @@
 const express = require('express');
 const mongoose=require('mongoose');
 require('dotenv').config();
-const userRoute=require('./routes/user.js');
+const bitacoraRoute=require('./routes/bitacoraRoutes.js');
+const asistenciaRoute=require('./routes/asistenciaRoutes.js');
+const checadorRoute = require('./routes/checadorRoutes.js');
 
 const app =express();
 const port=process.env.port || 9000;
 
 // middleware
 app.use(express.json());
-app.use('/',userRoute);
+app.use('/bitacora', bitacoraRoute);
+app.use('/asistencia', asistenciaRoute);
+app.use('/checador', checadorRoute);
+
 // routes
 app.get('/',(req,res)=>{
     res.send('todo bien')
