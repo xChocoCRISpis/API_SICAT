@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Checador = require('../models/modelChecador.js'); 
-const Funciones = require('../funciones.js');
+const Funciones = require('../utils/funcionesFecha.js');
 
 // Crear
 router.post('/crear', async (req, res) => {

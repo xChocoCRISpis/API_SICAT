@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Bitacora = require('../models/modelBitacora.js'); 
-const Funciones = require('../funciones.js');
+const Funciones = require('../utils/funcionesFecha.js');
 
 
 // Crear

@@ -9,7 +9,7 @@ export const registrarBitacora = async (idUsuario, accion) => {
         const hora = now.toTimeString().split(' ')[0]; // Formato HH:MM:SS
 
         // Realizar la solicitud a la API de MongoDB
-        const response = await axios.post('http://localhost:9000/crear', {
+        const response = await axios.post('http://localhost:9000/bitacora/crear', {
             id_usuario: idUsuario,
             detalles_bitacora: [{
                 fecha: fecha,
