@@ -72,6 +72,3 @@ router.delete('/eliminar/:id_encargado', async (req, res) => {
 });
 
 module.exports = router;
-
-
-module.exports = router;

@@ -5,6 +5,7 @@ import { handleError } from "./src/middlewares/handleError.js";
 import notesRoute from "./src/resources/notes/notes.routes.js";
 import usuarioRoute from "./src/resources/usuario/usuario.routes.js";
 import actividadesRoute from "./src/resources/actividades/actividades.routes.js";
+import checadorRoute from "./src/resources/checador/checador.routes.js";
 
 import { testConnection } from "./test-db-connection.js";
 
@@ -22,6 +23,7 @@ testConnection();
 app.use("/notes", notesRoute);
 app.use("/usuario",usuarioRoute);
 app.use("/actividades",actividadesRoute);
+app.use("/checador",checadorRoute);
 
 
 app.use(notFound);
