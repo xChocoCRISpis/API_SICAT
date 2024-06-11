@@ -5,13 +5,20 @@ const Funciones = require('../utils/funcionesFecha.js');
 
 // Crear
 router.post('/crear', async (req, res) => {
-    const { id_encargado, asistencia } = req.body;
-
+    const { id_pertenece, asistencia } = req.body;
     try {
-        // Crear un nuevo documento de asistencia
-        const nuevaAsistencia = new Asistencia({ id_encargado, asistencia });
-        const savedAsistencia = await nuevaAsistencia.save();
-        res.status(201).json(savedAsistencia);
+        
+        let asistenciaIn = await Asistencia.findOne({ id_pertenece});
+
+        if (asistenciaIn) {
+            
+            asistenciaIn.asistencia.push(...asistencia);
+        } else {
+            
+            asistenciaIn = new Asistencia({ id_pertenece, asistencia});
+        }
+        const asis=await asistenciaIn.save();
+        res.status(201).json(asis);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -72,8 +79,40 @@ router.delete('/eliminar/:id_encargado', async (req, res) => {
     }
 });
 
+
+// Función para obtener las horas por id_pertenece
+const obtenerHorasPorIdPertenece = async (id_pertenece) => {
+    try {
+        const result = await Asistencia.aggregate([
+            { $match: { id_pertenece: id_pertenece } },
+            { $unwind: "$asistencia" },
+            { $group: {
+                _id: "$id_pertenece",
+                totalHoras: { $sum: "$asistencia.horas" }
+            }}
+        ]);
+
+        if (result.length > 0) {
+            return result[0].totalHoras;
+        } else {
+            return 0; // Si no se encuentra el id_pertenece, devolver 0 horas
+        }
+    } catch (error) {
+        console.error('Error al obtener las horas:', error);
+        throw new Error('Error al obtener las horas');
+    }
+};
+
+// Ruta para obtener las horas por id_pertenece
+router.get('/getHoras/:id_pertenece', async (req, res) => {
+    const { id_pertenece } = req.params;
+
+    try {
+        const totalHoras = await obtenerHorasPorIdPertenece(Number(id_pertenece));
+        res.status(200).json({ id_pertenece, totalHoras });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 module.exports = router;
 
-
-
-module.exports = router;

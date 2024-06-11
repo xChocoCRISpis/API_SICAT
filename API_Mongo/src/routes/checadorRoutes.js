@@ -8,10 +8,18 @@ router.post('/crear', async (req, res) => {
     const { id_encargado, checador } = req.body;
 
     try {
-        // Crear un nuevo documento de checador
-        const nuevoChecador = new Checador({ id_encargado, checador });
-        const savedChecador = await nuevoChecador.save();
-        res.status(201).json(savedChecador);
+        
+        let checadorIn = await Checador.findOne({ id_encargado });
+
+        if (checadorIn) {
+            
+            checadorIn.checador.push(...checador);
+        } else {
+            
+            checadorIn = new Checador({ id_encargado, checador});
+        }
+        const savedChecador = await checadorIn.save();
+        res.status(201).json("Checkout insertado correctamente");
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -70,5 +78,7 @@ router.delete('/eliminar/:id_encargado', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+
 
 module.exports = router;

@@ -2,6 +2,7 @@ import { pool } from "../../db/connect.js";
 import { createCustomError } from "../../errors/customErrors.js";
 import { tryCatchWrapper } from "../../middlewares/tryCatchWrapper.js";
 import { obtenerDiaYHoraActual} from "../utils/funcionesFecha.js";
+import axios from "axios";
 
 export const registrarChecador = async (idEncargado) => {
     try {
@@ -11,19 +12,27 @@ export const registrarChecador = async (idEncargado) => {
 
         // Llamar al procedimiento almacenado para validar el horario
         await pool.query(
-            'CALL sp_ValidarHorarioProfesor(?, ?, ?, @es_valido);', 
+            'CALL sp_ValidarHorarioProfesor(?, ?, ?, @es_valido, @horario);', 
             [idEncargado, diaYPeriodo, hora]
         );
 
-        const [results] = await pool.query('SELECT @es_valido AS es_valido;');
-
+        const [results] = await pool.query('SELECT @es_valido AS es_valido, @horario as horario;');
         const esValido = results[0].es_valido;
+        
 
         console.log("Resultado del SP:", esValido);
 
-        
         if (esValido) {
-            return { success: true, message: 'Registro insertado correctamente.' };
+            // Crear un nuevo registro en MongoDB
+            const nuevoRegistro = {
+                id_encargado: idEncargado,
+                checador: [{ fecha: diaYPeriodo, hora, id_horario: results[0].horario }] // Ajusta id_horario según sea necesario
+            };
+
+            // Hacer la petición a la API de MongoDB
+            const response = await axios.post('http://localhost:9000/checador/crear', nuevoRegistro);
+
+            return { success: true, message: 'Registro insertado correctamente.', data: response.data };
         } else {
             return { success: false, message: 'Fuera del horario permitido.' };
         }
