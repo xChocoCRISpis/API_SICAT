@@ -65,9 +65,6 @@ export const enviarToken = async (req, res) => {
     if (results.affectedRows === 0) {
         throw new Error('Correo o usuario no encontrado en la base de datos');
     }
-
-    
-
     try {
         const response = await enviarCorreoUsuario(correo,idUsuario,'Token de Verificación',`Tu nueva contraseña temporal es: ${token}`);;
         res.status(200).json(response);
@@ -75,3 +72,71 @@ export const enviarToken = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+export const cambiarConstrasena = tryCatchWrapper(async (req, res, next) => {
+    const { idUsuario, contrasenaVieja, contrasenaNueva } = req.body;
+
+    if (!idUsuario || !contrasenaVieja || !contrasenaNueva) {
+        return next(createCustomError("Username and password are required", 400));
+    }
+    try{
+    const [result] = await pool.query("UPDATE tb_usuarios SET Contrasena = ? WHERE id_usuario_pk = ? AND Contrasena = ?;", [contrasenaNueva, idUsuario, contrasenaVieja]);
+
+        // Verificar si se afectó alguna fila
+        if (result.affectedRows === 0) {
+            return next(createCustomError("User not found or password not changed", 404));
+        }
+
+        // Registrar la acción en la bitácora
+        await registrarBitacora(idUsuario, 'Cambio de contraseña');
+
+        // Enviar la respuesta después de completar la solicitud a la API de MongoDB
+        res.status(200).json({
+            message: 'Password changed successfully'
+        });
+    } catch (error) {
+        next(createCustomError("Database query failed", 500));
+    }
+});
+
+// Función para obtener datos del perfil
+export const getDatosPerfil = tryCatchWrapper(async (req, res, next) => {
+    const { idUsuario } = req.params;
+    if (!idUsuario) {
+        return next(createCustomError("User ID is required", 400));
+    }
+
+    try {
+        const [rows] = await pool.query("CALL sp_Datos_Perfil(?);", [idUsuario]);
+
+        if (rows.length === 0) {
+            return next(createCustomError("No data found for the given user ID", 404));
+        }
+
+        res.status(200).json(rows[0]);
+    } catch (error) {
+        next(createCustomError("Database query failed", 500));
+    }
+});
+
+
+export const getHorariosPerfil = tryCatchWrapper(async (req, res, next) => {
+    const { idUsuario } = req.params;
+
+    if (!idUsuario) {
+        return next(createCustomError("User ID is required", 400));
+    }
+
+    try {
+        const [rows] = await pool.query("CALL sp_Horarios_perfil(?);", [idUsuario]);
+
+        if (rows.length === 0) {
+            return next(createCustomError("No data found for the given user ID", 404));
+        }
+
+        res.status(200).json(rows[0]);
+    } catch (error) {
+        next(createCustomError("Database query failed", 500));
+    }
+});
