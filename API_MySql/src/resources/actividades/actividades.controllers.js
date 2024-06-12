@@ -16,13 +16,13 @@ export const insertarAlumno = async (req, res) => {
         Foto,
         Telefono,
         Correo,
-        Id_carrera_fk
+        Id_carrera
     } = req.body;
 
     try {
         const [results] = await pool.query(
             'CALL sp_Insertar_Alumno_Actividad(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [Id_actividad, Num_control, Nombre, Ap_paterno, Ap_materno, Sexo, Fecha_nac, Semestre, Nivel, Foto, Telefono, Correo, Id_carrera_fk]
+            [Id_actividad, Num_control, Nombre, Ap_paterno, Ap_materno, Sexo, Fecha_nac, Semestre, Nivel, Foto, Telefono, Correo, Id_carrera]
         );
 
         // Acceder al mensaje en la estructura correcta

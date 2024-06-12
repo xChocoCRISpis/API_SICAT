@@ -7,6 +7,7 @@ import usuarioRoute from "./src/resources/usuario/usuario.routes.js";
 import actividadesRoute from "./src/resources/actividades/actividades.routes.js";
 import checadorRoute from "./src/resources/checador/checador.routes.js";
 import asitenciaRoute from "./src/resources/asistencia/asistencia.routes.js";
+import encargadoRoute from "./src/resources/encargado/encargado.routes.js"
 
 
 import { testConnection } from "./test-db-connection.js";
@@ -27,6 +28,7 @@ app.use("/usuario",usuarioRoute);
 app.use("/actividades",actividadesRoute);
 app.use("/checador",checadorRoute);
 app.use("/asistencia",asitenciaRoute);
+app.use("/encargado",encargadoRoute);
 
 app.use(notFound);
 app.use(handleError);

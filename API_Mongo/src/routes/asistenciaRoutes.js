@@ -39,7 +39,7 @@ router.get('/traer/:id_encargado', async (req, res) => {
     const { id_encargado } = req.params;
 
     try {
-        const asistencia = await Asistencia.findOne({ id_encargado });
+        const asistencia = await Asistencia.findOne({ "asistencia.id_encargado": id_encargado });
         if (!asistencia) return res.status(404).json({ message: "Not found" });
         res.status(200).json(asistencia);
     } catch (error) {
@@ -47,16 +47,17 @@ router.get('/traer/:id_encargado', async (req, res) => {
     }
 });
 
+
 // Actualizar por ID de encargado
 router.put('/actualizar/:id_encargado', async (req, res) => {
     const { id_encargado } = req.params;
-    const { fecha, hora } = req.body;
+    const { fecha, horas } = req.body;
 
     try {
         const asistencia = await Asistencia.findOneAndUpdate(
-            { id_encargado },
-            { $set: { "asistencia.$[elem].fecha": fecha, "asistencia.$[elem].hora": hora } },
-            { arrayFilters: [{ "elem.fecha": fecha, "elem.hora": hora }], new: true }
+            { "asistencia.id_encargado": id_encargado, "asistencia.fecha": fecha },
+            { $set: { "asistencia.$.horas": horas } },
+            { new: true }
         );
 
         if (!asistencia) return res.status(404).json({ message: "Not found" });
@@ -71,7 +72,12 @@ router.delete('/eliminar/:id_encargado', async (req, res) => {
     const { id_encargado } = req.params;
 
     try {
-        const asistencia = await Asistencia.findOneAndRemove({ id_encargado });
+        const asistencia = await Asistencia.findOneAndUpdate(
+            { "asistencia.id_encargado": id_encargado },
+            { $pull: { asistencia: { id_encargado } } },
+            { new: true }
+        );
+
         if (!asistencia) return res.status(404).json({ message: "Not found" });
         res.status(200).json({ message: "Asistencia eliminada" });
     } catch (error) {

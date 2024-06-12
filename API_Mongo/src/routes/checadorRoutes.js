@@ -48,6 +48,7 @@ router.get('/traer/:id_encargado', async (req, res) => {
     }
 });
 
+
 // Actualizar por ID de encargado
 router.put('/actualizar/:id_encargado', async (req, res) => {
     const { id_encargado } = req.params;
@@ -55,9 +56,9 @@ router.put('/actualizar/:id_encargado', async (req, res) => {
 
     try {
         const checador = await Checador.findOneAndUpdate(
-            { id_encargado: parseInt(id_encargado) },
-            { $set: { "checador.$[elem].hora": hora, "checador.$[elem].fecha": fecha, "checador.$[elem].id_horario": id_horario } },
-            { arrayFilters: [{ "elem.hora": hora, "elem.fecha": fecha, "elem.id_horario": id_horario }], new: true }
+            { id_encargado: parseInt(id_encargado), "checador.fecha": fecha, "checador.hora": hora, "checador.id_horario": id_horario },
+            { $set: { "checador.$.hora": hora, "checador.$.fecha": fecha, "checador.$.id_horario": id_horario } },
+            { new: true }
         );
         if (!checador) return res.status(404).json({ message: "Not found" });
         res.status(200).json(checador);
@@ -66,19 +67,23 @@ router.put('/actualizar/:id_encargado', async (req, res) => {
     }
 });
 
+
 // Eliminar por ID de encargado
 router.delete('/eliminar/:id_encargado', async (req, res) => {
     const { id_encargado } = req.params;
 
     try {
-        const checador = await Checador.findOneAndRemove({ id_encargado: parseInt(id_encargado) });
+        const checador = await Checador.findOneAndUpdate(
+            { id_encargado: parseInt(id_encargado) },
+            { $pull: { checador: { id_encargado: parseInt(id_encargado) } } },
+            { new: true }
+        );
         if (!checador) return res.status(404).json({ message: "Not found" });
         res.status(200).json({ message: "Checador eliminado" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
-
 
 
 module.exports = router;
